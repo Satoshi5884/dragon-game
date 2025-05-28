@@ -1,54 +1,74 @@
-# React + TypeScript + Vite
+# Dragon Game
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A 2D platformer game built with React, TypeScript, and Phaser.js featuring multiple playable characters.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Multiple Characters**: Choose from 3 different player characters (Player 1, Player 2, Player 3)
+- **Smooth Animations**: Optimized animation system with stable sprite transitions
+- **Multiple Stages**: Progress through different challenging levels
+- **Touch Controls**: Mobile-friendly touch controls for movement and jumping
+- **Lives System**: Health management with respawn mechanics
+- **Enemy Variety**: Face different types of enemies including slimes, bats, and spikes
 
-## Expanding the ESLint configuration
+## Recent Improvements
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **Fixed Animation Flickering**: Resolved rapid texture switching issues for Player 2 and Player 3
+- **Stable State Management**: Improved animation state transitions to prevent visual glitches
+- **Optimized Performance**: Reduced unnecessary texture updates for smoother gameplay
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+## Tech Stack
+
+- **React** + **TypeScript** for UI framework
+- **Phaser.js** for game engine
+- **Vite** for build tooling
+- **ESLint** for code quality
+
+## Getting Started
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/Satoshi5884/dragon-game.git
+cd dragon-game
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+2. Install dependencies:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+```bash
+npm install
 ```
+
+3. Start the development server:
+
+```bash
+npm run dev
+```
+
+4. Open your browser and navigate to `http://localhost:5173`
+
+## Game Controls
+
+- **Arrow Keys** or **WASD**: Move left/right
+- **Space** or **Up Arrow**: Jump (double jump available)
+- **Touch Controls**: Use on-screen buttons for mobile devices
+
+## Project Structure
+
+```
+src/
+├── game/
+│   ├── scenes/          # Game scenes (Menu, Stages, UI)
+│   ├── sprites/         # Player and Enemy classes
+│   └── utils/           # Utility functions
+├── assets/              # Game assets
+└── App.tsx             # Main React component
+```
+
+## Contributing
+
+Feel free to submit issues and enhancement requests!
+
+## License
+
+This project is open source and available under the [MIT License](LICENSE).
