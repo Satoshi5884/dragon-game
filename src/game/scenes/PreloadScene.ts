@@ -39,47 +39,47 @@ export class PreloadScene extends Phaser.Scene {
     })
 
     // Load player sprites
-    this.load.image('player-idle', '/assets/sprites/player-idle.png')
-    this.load.image('player-run-1', '/assets/sprites/player-run-1.png')
-    this.load.image('player-run-2', '/assets/sprites/player-run-2.png')
-    this.load.image('player-jump', '/assets/sprites/player-jump.png')
+    this.load.image('player-idle', 'assets/sprites/player-idle.png')
+    this.load.image('player-run-1', 'assets/sprites/player-run-1.png')
+    this.load.image('player-run-2', 'assets/sprites/player-run-2.png')
+    this.load.image('player-jump', 'assets/sprites/player-jump.png')
     
     // Load player2 sprites
-    this.load.image('player2-idle', '/assets/sprites/player2-idle.png')
-    this.load.image('player2-run-1', '/assets/sprites/player2-run-1.png')
-    this.load.image('player2-run-2', '/assets/sprites/player2-run-2.png')
-    this.load.image('player2-jump', '/assets/sprites/player2-jump.png')
+    this.load.image('player2-idle', 'assets/sprites/player2-idle.png')
+    this.load.image('player2-run-1', 'assets/sprites/player2-run-1.png')
+    this.load.image('player2-run-2', 'assets/sprites/player2-run-2.png')
+    this.load.image('player2-jump', 'assets/sprites/player2-jump.png')
     
     // Load player3 sprites
-    this.load.image('player3-idle', '/assets/sprites/player3-idle.png')
-    this.load.image('player3-run-1', '/assets/sprites/player3-run-1.png')
-    this.load.image('player3-run-2', '/assets/sprites/player3-run-2.png')
-    this.load.image('player3-jump', '/assets/sprites/player3-jump.png')
+    this.load.image('player3-idle', 'assets/sprites/player3-idle.png')
+    this.load.image('player3-run-1', 'assets/sprites/player3-run-1.png')
+    this.load.image('player3-run-2', 'assets/sprites/player3-run-2.png')
+    this.load.image('player3-jump', 'assets/sprites/player3-jump.png')
     
     // Load enemy sprites
-    this.load.image('enemy-slime', '/assets/sprites/enemy-slime.png')
-    this.load.image('enemy-bat', '/assets/sprites/enemy-bat.png')
-    this.load.image('enemy-spike', '/assets/sprites/enemy-spike.png')
+    this.load.image('enemy-slime', 'assets/sprites/enemy-slime.png')
+    this.load.image('enemy-bat', 'assets/sprites/enemy-bat.png')
+    this.load.image('enemy-spike', 'assets/sprites/enemy-spike.png')
     
     // Load tiles
-    this.load.image('ground', '/assets/tiles/ground.png')
-    this.load.image('brick', '/assets/tiles/brick.png')
-    this.load.image('platform', '/assets/tiles/platform.png')
-    this.load.image('spike', '/assets/tiles/spike.png')
+    this.load.image('ground', 'assets/tiles/ground.png')
+    this.load.image('brick', 'assets/tiles/brick.png')
+    this.load.image('platform', 'assets/tiles/platform.png')
+    this.load.image('spike', 'assets/tiles/spike.png')
     
     // Load items
-    this.load.image('coin', '/assets/items/coin.png')
-    this.load.image('powerup', '/assets/items/powerup.png')
+    this.load.image('coin', 'assets/items/coin.png')
+    this.load.image('powerup', 'assets/items/powerup.png')
     
     // Load backgrounds
-    this.load.image('bg-forest', '/assets/backgrounds/bg-forest.png')
-    this.load.image('bg-cave', '/assets/backgrounds/bg-cave.png')
-    this.load.image('bg-castle', '/assets/backgrounds/bg-castle.png')
+    this.load.image('bg-forest', 'assets/backgrounds/bg-forest.png')
+    this.load.image('bg-cave', 'assets/backgrounds/bg-cave.png')
+    this.load.image('bg-castle', 'assets/backgrounds/bg-castle.png')
     
     // Load UI elements
-    this.load.image('button-left', '/assets/ui/button-left.png')
-    this.load.image('button-right', '/assets/ui/button-right.png')
-    this.load.image('button-jump', '/assets/ui/button-jump.png')
+    this.load.image('button-left', 'assets/ui/button-left.png')
+    this.load.image('button-right', 'assets/ui/button-right.png')
+    this.load.image('button-jump', 'assets/ui/button-jump.png')
   }
 
   create() {
