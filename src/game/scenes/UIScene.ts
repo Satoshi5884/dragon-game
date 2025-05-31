@@ -13,8 +13,6 @@ export class UIScene extends Phaser.Scene {
 
   create() {
     console.log('UIScene: create() called')
-    const width = this.cameras.main.width
-    const height = this.cameras.main.height
 
     // Score and lives display
     this.scoreText = this.add.text(16, 16, 'Score: 0', {
