@@ -29,10 +29,7 @@ export class UIScene extends Phaser.Scene {
       strokeThickness: 4
     })
 
-    // Check if touch is supported
-    if (this.sys.game.device.input.touch) {
-      this.createVirtualControls()
-    }
+    // Virtual controls are disabled
   }
 
   createVirtualControls() {
