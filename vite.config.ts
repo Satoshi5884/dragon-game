@@ -5,8 +5,10 @@ import react from '@vitejs/plugin-react-swc'
 export default defineConfig({
   plugins: [react()],
   publicDir: 'public',
-  // GitHub Pages では「ユーザーサイト」以外は /リポジトリ名/ がルートになる
-  base: '/dragon-game/',   // 末尾スラッシュを忘れずに
+  // GitHub Pages の設定
+  // ユーザーサイト (username.github.io) の場合は '/'
+  // プロジェクトサイト (username.github.io/repository) の場合は '/repository/'
+  base: '/',   // ユーザーサイト用設定
   server: {
     port: 5173,
   }
