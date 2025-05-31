@@ -5,7 +5,8 @@ import react from '@vitejs/plugin-react-swc'
 export default defineConfig({
   plugins: [react()],
   publicDir: 'public',
-  base: '/',
+  // GitHub Pages では「ユーザーサイト」以外は /リポジトリ名/ がルートになる
+  base: '/dragon-game/',   // 末尾スラッシュを忘れずに
   server: {
     port: 5173,
   }
