@@ -15,9 +15,11 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   private isRespawning: boolean = false
   private characterType: number = 1
   private spritePrefix: string = 'player'
-  private currentTexture: string = ''
-  private currentState: string = 'idle' // Track current animation state
-  private lastMovementTime: number = 0 // Track when movement last occurred
+  private currentState: string = 'idle'
+  private textureCache: { [key: string]: string } = {}
+  private stateFrameCount: number = 0
+  private lastVelocityX: number = 0
+  private lastDesiredState: string = 'idle'
 
   constructor(scene: Phaser.Scene, x: number, y: number, characterType: number = 1) {
     // Set sprite prefix based on character type
@@ -26,9 +28,14 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     
     this.characterType = characterType
     this.spritePrefix = spritePrefix
-    this.currentTexture = `${spritePrefix}-idle`
     this.currentState = 'idle'
-    this.lastMovementTime = 0 // Initialize movement time
+    
+    // Cache texture names to avoid string concatenation in update loop
+    this.textureCache = {
+      'idle': `${spritePrefix}-idle`,
+      'run': `${spritePrefix}-run-1`,
+      'jump': `${spritePrefix}-jump`
+    }
     
     scene.add.existing(this)
     scene.physics.add.existing(this)
@@ -60,39 +67,6 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       this.isJumping = false
     }
 
-    // For player2 and player3, use a simpler approach - only change texture when absolutely necessary
-    if (this.characterType === 2 || this.characterType === 3) {
-      // Only update texture for major state changes
-      const isMoving = this.cursors.left.isDown || this.moveLeft || this.cursors.right.isDown || this.moveRight
-      
-      if (!onGround && this.currentState !== 'jump') {
-        this.currentState = 'jump'
-        this.setTexture(`${this.spritePrefix}-jump`)
-      } else if (onGround && isMoving && this.currentState !== 'run') {
-        this.currentState = 'run'
-        this.setTexture(`${this.spritePrefix}-run-1`)
-      } else if (onGround && !isMoving && this.currentState !== 'idle') {
-        this.currentState = 'idle'
-        this.setTexture(`${this.spritePrefix}-idle`)
-      }
-    } else {
-      // Original behavior for player1
-      let desiredTexture: string
-      
-      if (!onGround) {
-        desiredTexture = `${this.spritePrefix}-jump`
-      } else if (this.cursors.left.isDown || this.moveLeft || this.cursors.right.isDown || this.moveRight) {
-        desiredTexture = `${this.spritePrefix}-run-1`
-      } else {
-        desiredTexture = `${this.spritePrefix}-idle`
-      }
-      
-      if (desiredTexture !== this.currentTexture) {
-        this.setTexture(desiredTexture)
-        this.currentTexture = desiredTexture
-      }
-    }
-
     // Handle movement
     if (this.cursors.left.isDown || this.moveLeft) {
       this.setVelocityX(-160)
@@ -110,6 +84,74 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       this.jump()
     }
     this.wasJumpPressed = jumpKeyPressed
+
+    // Update sprite texture based on state
+    // For player2 and player3, use ultra-stabilized state detection
+    if (this.characterType === 2 || this.characterType === 3) {
+      const currentVelocityX = this.body!.velocity.x
+      const velocityThreshold = 50 // Even higher threshold
+      
+      // Check if player is actively moving based on input
+      const isActivelyMoving = this.cursors.left.isDown || this.moveLeft || this.cursors.right.isDown || this.moveRight
+      const hasSignificantVelocity = Math.abs(currentVelocityX) > velocityThreshold
+      
+      // For stopping: if not actively moving, immediately consider it idle regardless of velocity
+      const isMoving = isActivelyMoving && hasSignificantVelocity
+      
+      let desiredState: string
+      if (!onGround) {
+        desiredState = 'jump'
+      } else if (isMoving) {
+        desiredState = 'run'
+      } else {
+        desiredState = 'idle'
+      }
+      
+      // Track if desired state has changed from last frame
+      if (desiredState !== this.lastDesiredState) {
+        this.stateFrameCount = 1
+      } else {
+        this.stateFrameCount++
+      }
+      
+      // Only change visual state if new desired state has been stable for enough frames
+      let requiredFrames = 5
+      if (this.currentState === 'run' && desiredState === 'idle') {
+        // When stopping, be more aggressive to prevent flickering
+        requiredFrames = 2
+      } else if (this.currentState === 'idle' && desiredState === 'run') {
+        // When starting to move, wait a bit longer
+        requiredFrames = 8
+      }
+      
+      if (desiredState !== this.currentState && this.stateFrameCount >= requiredFrames) {
+        this.currentState = desiredState
+        const textureName = this.textureCache[desiredState]
+        if (textureName && this.texture.key !== textureName) {
+          this.setTexture(textureName)
+        }
+      }
+      
+      this.lastDesiredState = desiredState
+      this.lastVelocityX = currentVelocityX
+    } else {
+      // Original behavior for player1
+      const isMoving = this.cursors.left.isDown || this.moveLeft || this.cursors.right.isDown || this.moveRight
+      
+      if (!onGround) {
+        if (this.texture.key !== this.textureCache['jump']) {
+          this.setTexture(this.textureCache['jump'])
+        }
+      } else if (isMoving) {
+        if (this.texture.key !== this.textureCache['run']) {
+          this.setTexture(this.textureCache['run'])
+        }
+      } else {
+        if (this.texture.key !== this.textureCache['idle']) {
+          this.setTexture(this.textureCache['idle'])
+        }
+      }
+    }
 
     // Handle invulnerability flashing
     if (this.invulnerable) {
