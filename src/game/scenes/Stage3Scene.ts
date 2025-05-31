@@ -514,7 +514,7 @@ export class Stage3Scene extends Phaser.Scene {
     }
   }
 
-  collectCoin(player: any, coin: any) {
+  collectCoin(_player: any, coin: any) {
     coin.destroy()
     const uiScene = this.scene.get('UIScene') as any
     uiScene.updateScore(10)
@@ -542,21 +542,21 @@ export class Stage3Scene extends Phaser.Scene {
     const centerX = this.cameras.main.scrollX + this.cameras.main.width / 2
     const centerY = this.cameras.main.scrollY + this.cameras.main.height / 2
     
-    const completeText = this.add.text(centerX, centerY - 50, 'Congratulations!', {
+    this.add.text(centerX, centerY - 50, 'Congratulations!', {
       fontSize: '32px',
       color: '#ffff00',
       stroke: '#000000',
       strokeThickness: 4
     }).setOrigin(0.5)
 
-    const scoreText = this.add.text(centerX, centerY + 50, `Final Score: ${finalScore}`, {
+    this.add.text(centerX, centerY + 50, `Final Score: ${finalScore}`, {
       fontSize: '32px',
       color: '#ffffff',
       stroke: '#000000',
       strokeThickness: 4
     }).setOrigin(0.5)
 
-    const returnText = this.add.text(centerX, centerY + 100, 'Returning to title screen...', {
+    this.add.text(centerX, centerY + 100, 'Returning to title screen...', {
       fontSize: '18px',
       color: '#cccccc',
       stroke: '#000000',

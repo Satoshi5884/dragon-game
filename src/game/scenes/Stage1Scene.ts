@@ -284,7 +284,7 @@ export class Stage1Scene extends Phaser.Scene {
     }
   }
 
-  collectCoin(player: any, coin: any) {
+  collectCoin(_player: any, coin: any) {
     coin.destroy()
     const uiScene = this.scene.get('UIScene') as any
     uiScene.updateScore(10)
@@ -309,7 +309,7 @@ export class Stage1Scene extends Phaser.Scene {
     const centerX = this.cameras.main.scrollX + this.cameras.main.width / 2
     const centerY = this.cameras.main.scrollY + this.cameras.main.height / 2
     
-    const completeText = this.add.text(
+    this.add.text(
       centerX, 
       centerY, 
       'Stage 1 Complete!', 

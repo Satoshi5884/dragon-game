@@ -7,15 +7,11 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
   private turnTimer: number = 0
   private turnInterval: number
   private verticalDirection: number = 1
-  private initialX: number
-  private initialY: number
 
   constructor(scene: Phaser.Scene, x: number, y: number, type: string = 'enemy-1') {
     super(scene, x, y, type)
     
     this.enemyType = type
-    this.initialX = x
-    this.initialY = y
     scene.add.existing(this)
     scene.physics.add.existing(this)
     
@@ -66,7 +62,7 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     }
   }
 
-  update(time: number, delta: number) {
+  update(_time: number, delta: number) {
     if (this.enemyType === 'enemy-bat') {
       // Bats move diagonally
       this.setVelocityX(this.moveSpeed * this.direction)

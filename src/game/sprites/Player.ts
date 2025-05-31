@@ -2,7 +2,6 @@ import Phaser from 'phaser'
 
 export class Player extends Phaser.Physics.Arcade.Sprite {
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys
-  private isJumping: boolean = false
   private isDead: boolean = false
   private lives: number = 3
   private invulnerable: boolean = false
@@ -14,11 +13,9 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   private wasJumpPressed: boolean = false
   private isRespawning: boolean = false
   private characterType: number = 1
-  private spritePrefix: string = 'player'
   private currentState: string = 'idle'
   private textureCache: { [key: string]: string } = {}
   private stateFrameCount: number = 0
-  private lastVelocityX: number = 0
   private lastDesiredState: string = 'idle'
   private controlMode: 'pc' | 'mobile' = 'pc'
   private mobileDirection: 'left' | 'right' = 'right'
@@ -30,7 +27,6 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     super(scene, x, y, `${spritePrefix}-idle`)
     
     this.characterType = characterType
-    this.spritePrefix = spritePrefix
     this.currentState = 'idle'
     
     // Cache texture names to avoid string concatenation in update loop
@@ -82,7 +78,6 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     // Reset jump count when on ground
     if (onGround) {
       this.jumpCount = 0
-      this.isJumping = false
     }
 
     // Handle movement based on control mode
@@ -183,7 +178,6 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       }
       
       this.lastDesiredState = desiredState
-      this.lastVelocityX = currentVelocityX
     } else {
       // Original behavior for player1
       let isMoving: boolean
@@ -221,7 +215,6 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     if (this.jumpCount < this.maxJumps) {
       this.setVelocityY(-400)
       this.jumpCount++
-      this.isJumping = true
     }
   }
 

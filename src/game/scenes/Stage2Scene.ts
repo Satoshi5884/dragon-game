@@ -11,7 +11,6 @@ export class Stage2Scene extends Phaser.Scene {
   private background!: Phaser.GameObjects.TileSprite
   private worldWidth: number = 3000
   private spikes!: Phaser.Physics.Arcade.StaticGroup
-  private score: number = 0
 
   constructor() {
     super({ key: 'Stage2Scene' })
@@ -21,7 +20,6 @@ export class Stage2Scene extends Phaser.Scene {
     console.log('Stage2Scene: create() called')
     
     // Reset any previous state
-    this.score = 0
     
     // Set world bounds for scrolling
     this.physics.world.setBounds(0, 0, this.worldWidth, 844)
@@ -367,13 +365,13 @@ export class Stage2Scene extends Phaser.Scene {
     }
   }
 
-  collectCoin(player: any, coin: any) {
+  collectCoin(_player: any, coin: any) {
     coin.destroy()
     const uiScene = this.scene.get('UIScene') as any
     uiScene.updateScore(10)
   }
 
-  handlePlayerSpikeCollision(player: any, spike: any) {
+  handlePlayerSpikeCollision(player: any, _spike: any) {
     const p = player as Player
     const lives = p.takeDamage()
     
@@ -396,7 +394,7 @@ export class Stage2Scene extends Phaser.Scene {
     const centerX = this.cameras.main.scrollX + this.cameras.main.width / 2
     const centerY = this.cameras.main.scrollY + this.cameras.main.height / 2
     
-    const completeText = this.add.text(centerX, centerY, 'Stage 2 Complete!', {
+    this.add.text(centerX, centerY, 'Stage 2 Complete!', {
       fontSize: '32px',
       color: '#ffffff',
       stroke: '#000000',

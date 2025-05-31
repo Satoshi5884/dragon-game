@@ -160,7 +160,7 @@ export class MenuScene extends Phaser.Scene {
     }).setOrigin(0.5)
 
     // Add hover effects for characters
-    this.characterSprites.forEach((sprite, index) => {
+    this.characterSprites.forEach((sprite) => {
       sprite.on('pointerover', () => {
         sprite.setScale(0.14)
       })
