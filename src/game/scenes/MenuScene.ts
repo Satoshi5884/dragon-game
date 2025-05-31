@@ -62,20 +62,23 @@ export class MenuScene extends Phaser.Scene {
     char3.on('pointerdown', () => this.selectCharacter(3))
     this.characterSprites.push(char3)
 
-    // Character names
-    this.add.text(startX, characterY + 80, 'Player 1', {
+    // Character names with difficulty
+    this.add.text(startX, characterY + 80, 'Player 1\n(Easy)', {
       font: '18px Arial',
-      color: '#ffffff'
+      color: '#00ff00',
+      align: 'center'
     }).setOrigin(0.5)
 
-    this.add.text(width / 2, characterY + 80, 'Player 2', {
+    this.add.text(width / 2, characterY + 80, 'Player 2\n(Medium)', {
       font: '18px Arial',
-      color: '#ffffff'
+      color: '#ffff00',
+      align: 'center'
     }).setOrigin(0.5)
 
-    this.add.text(startX + spacing * 2, characterY + 80, 'Player 3', {
+    this.add.text(startX + spacing * 2, characterY + 80, 'Player 3\n(Hard)', {
       font: '18px Arial',
-      color: '#ffffff'
+      color: '#ff0000',
+      align: 'center'
     }).setOrigin(0.5)
 
     // Start button
@@ -95,15 +98,34 @@ export class MenuScene extends Phaser.Scene {
     })
 
     this.startButton.on('pointerdown', () => {
-      // Store selected character in registry
-      this.registry.set('selectedCharacter', this.selectedCharacter)
-      this.scene.start('Stage1Scene')
-      this.scene.launch('UIScene')
+      this.startGame()
+    })
+
+    // Add space key for starting game
+    const spaceKey = this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
+    spaceKey.on('down', () => {
+      this.startGame()
+    })
+
+    // Add arrow keys for character selection
+    const leftKey = this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT)
+    const rightKey = this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT)
+    
+    leftKey.on('down', () => {
+      if (this.selectedCharacter > 1) {
+        this.selectCharacter(this.selectedCharacter - 1)
+      }
+    })
+    
+    rightKey.on('down', () => {
+      if (this.selectedCharacter < 3) {
+        this.selectCharacter(this.selectedCharacter + 1)
+      }
     })
 
     // Instructions
-    this.add.text(width / 2, height * 0.85, 'Click a character to select\nArrow Keys or Touch Controls to Move\nSpace or Jump Button to Jump', {
-      font: '16px Arial',
+    this.add.text(width / 2, height * 0.85, 'Easy: Defeat enemies on contact\nMedium: Must stomp on enemies\nHard: Precise stomping required\n\nArrow Keys: Change Character\nSpace: Start Game', {
+      font: '14px Arial',
       color: '#ffffff',
       align: 'center'
     }).setOrigin(0.5)
@@ -134,5 +156,12 @@ export class MenuScene extends Phaser.Scene {
       duration: 200,
       yoyo: true
     })
+  }
+
+  startGame() {
+    // Store selected character in registry
+    this.registry.set('selectedCharacter', this.selectedCharacter)
+    this.scene.start('Stage1Scene')
+    this.scene.launch('UIScene')
   }
 }

@@ -46,8 +46,14 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.setCollideWorldBounds(false)
     // Player sprite dimensions: idle(679x814), jump(707x853), run(707-717x853-859)
     // Setting collision box to match scaled sprite size
-    this.setSize(400, 600)
-    this.setOffset(140, 100)
+    // Make collision box smaller for player3 to prevent falling through gaps
+    if (characterType === 3) {
+      this.setSize(350, 550)
+      this.setOffset(165, 125)
+    } else {
+      this.setSize(400, 600)
+      this.setOffset(140, 100)
+    }
     
     this.cursors = scene.input.keyboard!.createCursorKeys()
     

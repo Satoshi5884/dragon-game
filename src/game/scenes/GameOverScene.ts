@@ -46,8 +46,25 @@ export class GameOverScene extends Phaser.Scene {
     })
 
     retryButton.on('pointerdown', () => {
-      this.scene.stop('UIScene')
-      this.scene.start('MenuScene')
+      this.retry()
     })
+
+    // Add space key for retry
+    const spaceKey = this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
+    spaceKey.on('down', () => {
+      this.retry()
+    })
+
+    // Instructions
+    this.add.text(width / 2, height * 0.85, 'Press Space or Click Retry to continue', {
+      font: '16px Arial',
+      color: '#ffffff',
+      align: 'center'
+    }).setOrigin(0.5)
+  }
+
+  retry() {
+    this.scene.stop('UIScene')
+    this.scene.start('MenuScene')
   }
 }

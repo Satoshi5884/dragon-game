@@ -281,10 +281,84 @@ export class Stage2Scene extends Phaser.Scene {
 
   handlePlayerEnemyCollision(player: any, enemy: any) {
     const p = player as Player
-    const lives = p.takeDamage()
+    const e = enemy as Enemy
     
-    const uiScene = this.scene.get('UIScene') as any
-    uiScene.updateLives(lives)
+    // Get player character type from registry
+    const characterType = this.registry.get('selectedCharacter') || 1
+    
+    // Get positions
+    const playerCenterY = p.y
+    const enemyCenterY = e.y
+    const playerCenterX = p.x
+    const enemyCenterX = e.x
+    
+    // Player 1 (Easy): Can defeat enemies on any collision
+    if (characterType === 1) {
+      // Destroy enemy
+      e.destroyEnemy()
+      
+      // Small bounce for feedback
+      p.setVelocityY(-200)
+      
+      // Add score
+      const uiScene = this.scene.get('UIScene') as any
+      uiScene.updateScore(50)
+      return
+    }
+    
+    // Player 2 (Medium): Can only defeat enemies by stomping
+    if (characterType === 2) {
+      // Stomping conditions for player 2
+      const isPlayerAbove = playerCenterY < enemyCenterY + 20  // Stricter than before
+      const isPlayerFalling = p.body!.velocity.y > 30  // Must be falling with some speed
+      const isHorizontallyClose = Math.abs(playerCenterX - enemyCenterX) < 60  // Closer range
+      
+      if (isPlayerAbove && isPlayerFalling && isHorizontallyClose) {
+        // Destroy enemy
+        e.destroyEnemy()
+        
+        // Force player to bounce up automatically
+        p.setVelocityY(-300)
+        
+        // Add score
+        const uiScene = this.scene.get('UIScene') as any
+        uiScene.updateScore(50)
+      } else {
+        // Side collision - player takes damage
+        const lives = p.takeDamage()
+        
+        const uiScene = this.scene.get('UIScene') as any
+        uiScene.updateLives(lives)
+      }
+      return
+    }
+    
+    // Player 3 (Hard): Current difficult stomping mechanics
+    if (characterType === 3) {
+      // Very strict stomping conditions for player 3
+      const isPlayerAbove = playerCenterY < enemyCenterY + 10  // Very strict
+      const isPlayerFalling = p.body!.velocity.y > 50  // Must be falling fast
+      const isHorizontallyClose = Math.abs(playerCenterX - enemyCenterX) < 40  // Precise positioning
+      
+      if (isPlayerAbove && isPlayerFalling && isHorizontallyClose) {
+        // Destroy enemy
+        e.destroyEnemy()
+        
+        // Force player to bounce up automatically
+        p.setVelocityY(-300)
+        
+        // Add score
+        const uiScene = this.scene.get('UIScene') as any
+        uiScene.updateScore(50)
+      } else {
+        // Any other collision - player takes damage
+        const lives = p.takeDamage()
+        
+        const uiScene = this.scene.get('UIScene') as any
+        uiScene.updateLives(lives)
+      }
+      return
+    }
   }
 
   collectCoin(player: any, coin: any) {

@@ -130,4 +130,18 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.setFlipX(this.direction < 0)
     this.turnTimer = 0
   }
+
+  destroyEnemy() {
+    // Add death animation/effect
+    this.setTint(0xff0000)
+    this.setVelocity(0, -200)
+    
+    // Disable physics body
+    this.body!.enable = false
+    
+    // Remove after short delay
+    this.scene.time.delayedCall(500, () => {
+      this.destroy()
+    })
+  }
 }
