@@ -15,6 +15,11 @@ export class MenuScene extends Phaser.Scene {
 
   create() {
     console.log('MenuScene creating...')
+    
+    // Restore previous selection from registry if available
+    this.selectedCharacter = this.registry.get('selectedCharacter') || 1
+    this.selectedControlMode = this.registry.get('controlMode') || 'mobile'
+    
     const width = this.cameras.main.width
     const height = this.cameras.main.height
 
@@ -90,6 +95,12 @@ export class MenuScene extends Phaser.Scene {
     char3.setInteractive()
     char3.on('pointerdown', () => this.selectCharacter(3))
     this.characterSprites.push(char3)
+    
+    // Set initial selection frame position based on restored selection
+    this.selectionFrame.x = startX + (this.selectedCharacter - 1) * spacing
+    
+    // Set initial control mode based on restored selection
+    this.selectControlMode(this.selectedControlMode)
 
     // Character names with difficulty
     this.add.text(startX, characterY + 80, 'Player 1\n(Easy)', {
