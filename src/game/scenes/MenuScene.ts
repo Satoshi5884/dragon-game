@@ -5,6 +5,9 @@ export class MenuScene extends Phaser.Scene {
   private characterSprites: Phaser.GameObjects.Image[] = []
   private selectionFrame!: Phaser.GameObjects.Rectangle
   private startButton!: Phaser.GameObjects.Text
+  private selectedControlMode: 'pc' | 'mobile' = 'mobile'
+  private pcModeButton!: Phaser.GameObjects.Text
+  private mobileModeButton!: Phaser.GameObjects.Text
   
   constructor() {
     super({ key: 'MenuScene' })
@@ -26,15 +29,41 @@ export class MenuScene extends Phaser.Scene {
       strokeThickness: 6
     }).setOrigin(0.5)
 
+    // Control mode selection
+    this.add.text(width / 2, height / 4, 'Control Mode', {
+      font: '20px Arial',
+      color: '#ffffff'
+    }).setOrigin(0.5)
+
+    // PC Mode button
+    this.pcModeButton = this.add.text(width / 2 - 80, height / 4 + 40, 'PC Mode', {
+      font: '18px Arial',
+      color: '#ffffff',
+      backgroundColor: '#333333',
+      padding: { x: 15, y: 8 }
+    }).setOrigin(0.5).setInteractive()
+
+    // Mobile Mode button
+    this.mobileModeButton = this.add.text(width / 2 + 80, height / 4 + 40, 'Mobile Mode', {
+      font: '18px Arial',
+      color: '#ffffff',
+      backgroundColor: '#16213e',
+      padding: { x: 15, y: 8 }
+    }).setOrigin(0.5).setInteractive()
+
+    // Control mode button events
+    this.pcModeButton.on('pointerdown', () => this.selectControlMode('pc'))
+    this.mobileModeButton.on('pointerdown', () => this.selectControlMode('mobile'))
+
     // Character selection text
-    this.add.text(width / 2, height / 3, 'Choose Your Character', {
-      font: '24px Arial',
+    this.add.text(width / 2, height / 2 - 80, 'Choose Your Character', {
+      font: '20px Arial',
       color: '#ffffff'
     }).setOrigin(0.5)
 
     // Character selection area
     const characterY = height / 2 - 20
-    const spacing = 200
+    const spacing = 120
     const startX = width / 2 - spacing
 
     // Selection frame (highlight)
@@ -125,7 +154,7 @@ export class MenuScene extends Phaser.Scene {
 
     // Instructions
     this.add.text(width / 2, height * 0.85, 'Easy: Defeat enemies on contact\nMedium: Must stomp on enemies\nHard: Precise stomping required\n\nArrow Keys: Change Character\nSpace: Start Game', {
-      font: '14px Arial',
+      font: '12px Arial',
       color: '#ffffff',
       align: 'center'
     }).setOrigin(0.5)
@@ -141,9 +170,22 @@ export class MenuScene extends Phaser.Scene {
     })
   }
 
+  selectControlMode(mode: 'pc' | 'mobile') {
+    this.selectedControlMode = mode
+    
+    // Update button styles
+    if (mode === 'pc') {
+      this.pcModeButton.setStyle({ backgroundColor: '#16213e' })
+      this.mobileModeButton.setStyle({ backgroundColor: '#333333' })
+    } else {
+      this.pcModeButton.setStyle({ backgroundColor: '#333333' })
+      this.mobileModeButton.setStyle({ backgroundColor: '#16213e' })
+    }
+  }
+
   selectCharacter(character: number) {
     this.selectedCharacter = character
-    const spacing = 200
+    const spacing = 120
     const startX = this.cameras.main.width / 2 - spacing
     
     // Update selection frame position
@@ -159,8 +201,9 @@ export class MenuScene extends Phaser.Scene {
   }
 
   startGame() {
-    // Store selected character in registry
+    // Store selected character and control mode in registry
     this.registry.set('selectedCharacter', this.selectedCharacter)
+    this.registry.set('controlMode', this.selectedControlMode)
     this.scene.start('Stage1Scene')
     this.scene.launch('UIScene')
   }

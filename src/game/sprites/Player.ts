@@ -20,6 +20,9 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   private stateFrameCount: number = 0
   private lastVelocityX: number = 0
   private lastDesiredState: string = 'idle'
+  private controlMode: 'pc' | 'mobile' = 'pc'
+  private mobileDirection: 'left' | 'right' = 'right'
+  private isMobileMoving: boolean = false
 
   constructor(scene: Phaser.Scene, x: number, y: number, characterType: number = 1) {
     // Set sprite prefix based on character type
@@ -43,7 +46,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     // Scale down the sprite
     this.setScale(0.08)
     
-    this.setCollideWorldBounds(false)
+    this.setCollideWorldBounds(true)
     // Player sprite dimensions: idle(679x814), jump(707x853), run(707-717x853-859)
     // Setting collision box to match scaled sprite size
     // Make collision box smaller for player3 to prevent falling through gaps
@@ -57,9 +60,18 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     
     this.cursors = scene.input.keyboard!.createCursorKeys()
     
-    // Add space key for jumping
-    const spaceKey = scene.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
-    spaceKey.on('down', () => this.jump())
+    // Get control mode from registry
+    this.controlMode = scene.registry.get('controlMode') || 'pc'
+    
+    // Add space key for jumping (PC mode only)
+    if (this.controlMode === 'pc') {
+      const spaceKey = scene.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
+      spaceKey.on('down', () => this.jump())
+    } else {
+      // Mobile mode - start moving right initially
+      this.isMobileMoving = true
+      this.mobileDirection = 'right'
+    }
   }
 
   update() {
@@ -73,15 +85,42 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       this.isJumping = false
     }
 
-    // Handle movement
-    if (this.cursors.left.isDown || this.moveLeft) {
-      this.setVelocityX(-160)
-      this.setFlipX(true)
-    } else if (this.cursors.right.isDown || this.moveRight) {
-      this.setVelocityX(160)
-      this.setFlipX(false)
+    // Handle movement based on control mode
+    const baseSpeed = this.characterType === 3 ? 320 : 160  // Player3 is 2x faster
+    
+    if (this.controlMode === 'mobile') {
+      // Mobile mode: move in current direction
+      if (this.isMobileMoving) {
+        if (this.mobileDirection === 'left') {
+          this.setVelocityX(-baseSpeed)
+          this.setFlipX(true)
+        } else {
+          this.setVelocityX(baseSpeed)
+          this.setFlipX(false)
+        }
+      } else {
+        this.setVelocityX(0)
+      }
+      
+      // Override with manual input if provided
+      if (this.moveLeft) {
+        this.setVelocityX(-baseSpeed)
+        this.setFlipX(true)
+      } else if (this.moveRight) {
+        this.setVelocityX(baseSpeed)
+        this.setFlipX(false)
+      }
     } else {
-      this.setVelocityX(0)
+      // PC mode: original keyboard controls
+      if (this.cursors.left.isDown || this.moveLeft) {
+        this.setVelocityX(-baseSpeed)
+        this.setFlipX(true)
+      } else if (this.cursors.right.isDown || this.moveRight) {
+        this.setVelocityX(baseSpeed)
+        this.setFlipX(false)
+      } else {
+        this.setVelocityX(0)
+      }
     }
 
     // Handle jumping - detect new jump press
@@ -97,8 +136,13 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       const currentVelocityX = this.body!.velocity.x
       const velocityThreshold = 50 // Even higher threshold
       
-      // Check if player is actively moving based on input
-      const isActivelyMoving = this.cursors.left.isDown || this.moveLeft || this.cursors.right.isDown || this.moveRight
+      // Check if player is actively moving based on input and control mode
+      let isActivelyMoving: boolean
+      if (this.controlMode === 'mobile') {
+        isActivelyMoving = this.isMobileMoving || this.moveLeft || this.moveRight
+      } else {
+        isActivelyMoving = this.cursors.left.isDown || this.moveLeft || this.cursors.right.isDown || this.moveRight
+      }
       const hasSignificantVelocity = Math.abs(currentVelocityX) > velocityThreshold
       
       // For stopping: if not actively moving, immediately consider it idle regardless of velocity
@@ -142,7 +186,12 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       this.lastVelocityX = currentVelocityX
     } else {
       // Original behavior for player1
-      const isMoving = this.cursors.left.isDown || this.moveLeft || this.cursors.right.isDown || this.moveRight
+      let isMoving: boolean
+      if (this.controlMode === 'mobile') {
+        isMoving = this.isMobileMoving || this.moveLeft || this.moveRight
+      } else {
+        isMoving = this.cursors.left.isDown || this.moveLeft || this.cursors.right.isDown || this.moveRight
+      }
       
       if (!onGround) {
         if (this.texture.key !== this.textureCache['jump']) {
@@ -223,8 +272,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       this.lives = 0
       this.die()
     } else {
-      // Respawn from above
-      this.setPosition(currentX, -50)
+      // Respawn from above at the same X position
+      this.setPosition(currentX, -100)  // Higher respawn for better visibility
       this.setVelocity(0, 0)
       this.setTint(0xffffff)
       
@@ -254,5 +303,15 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   setJump(value: boolean) {
     this.jumpPressed = value
     if (value) this.jump()
+  }
+
+  // Mobile control methods
+  setMobileDirection(direction: 'left' | 'right') {
+    this.mobileDirection = direction
+    this.isMobileMoving = true
+  }
+
+  stopMobileMovement() {
+    this.isMobileMoving = false
   }
 }

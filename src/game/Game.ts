@@ -14,8 +14,8 @@ export class Game {
     const config: Phaser.Types.Core.GameConfig = {
       type: Phaser.WEBGL,
       parent: container,
-      width: 800,
-      height: 600,
+      width: 390,
+      height: 844,
       backgroundColor: 0x87CEEB,
       render: {
         pixelArt: true,

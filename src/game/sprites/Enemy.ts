@@ -144,4 +144,8 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
       this.destroy()
     })
   }
+
+  getEnemyType(): string {
+    return this.enemyType
+  }
 }

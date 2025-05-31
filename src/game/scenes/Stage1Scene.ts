@@ -18,7 +18,7 @@ export class Stage1Scene extends Phaser.Scene {
     console.log('Stage1Scene creating...')
     
     // Set world bounds for scrolling
-    this.physics.world.setBounds(0, 0, this.worldWidth, 600)
+    this.physics.world.setBounds(0, 0, this.worldWidth, 844)
 
     // Check if texture exists
     if (!this.textures.exists('bg-forest')) {
@@ -161,6 +161,12 @@ export class Stage1Scene extends Phaser.Scene {
     // Pass player reference to UI scene
     const uiScene = this.scene.get('UIScene') as any
     uiScene.setPlayer(this.player)
+    
+    // Add mobile touch controls if in mobile mode
+    const controlMode = this.registry.get('controlMode') || 'pc'
+    if (controlMode === 'mobile') {
+      this.setupMobileControls()
+    }
 
     // Win condition - reach the end
     const goal = this.add.rectangle(2200, 300, 80, 120, 0x00ff00, 0.8)
@@ -187,8 +193,9 @@ export class Stage1Scene extends Phaser.Scene {
   update() {
     this.player.update()
     
-    // Check if player has fallen off the map
-    if (this.player.y > 600) {
+    // Check if player has fallen off the map (player's feet reach the bottom)
+    if (this.player.y > 820) {  // 844 - 24 (approximate foot offset)
+      console.log('Player fell off screen at Y:', this.player.y)
       this.player.fallOffScreen()
     }
     
@@ -225,9 +232,19 @@ export class Stage1Scene extends Phaser.Scene {
       return
     }
     
-    // Player 2 (Medium): Can only defeat enemies by stomping
+    // Player 2 (Medium): Can only defeat enemies by stomping, but not spikes
     if (characterType === 2) {
-      // Stomping conditions for player 2
+      // Check if enemy is a spike - spikes cannot be stomped by player 2
+      if (e.getEnemyType() === 'enemy-spike') {
+        console.log('Player 2 - Medium mode: Spike collision - taking damage (cannot stomp spikes)')
+        const lives = p.takeDamage()
+        
+        const uiScene = this.scene.get('UIScene') as any
+        uiScene.updateLives(lives)
+        return
+      }
+      
+      // Stomping conditions for player 2 (non-spike enemies only)
       const isPlayerAbove = playerCenterY < enemyCenterY + 20  // Stricter than before
       const isPlayerFalling = p.body!.velocity.y > 30  // Must be falling with some speed
       const isHorizontallyClose = Math.abs(playerCenterX - enemyCenterX) < 60  // Closer range
@@ -255,33 +272,14 @@ export class Stage1Scene extends Phaser.Scene {
       return
     }
     
-    // Player 3 (Hard): Current difficult stomping mechanics
+    // Player 3 (Hard): Cannot defeat enemies at all
     if (characterType === 3) {
-      // Very strict stomping conditions for player 3
-      const isPlayerAbove = playerCenterY < enemyCenterY + 10  // Very strict
-      const isPlayerFalling = p.body!.velocity.y > 50  // Must be falling fast
-      const isHorizontallyClose = Math.abs(playerCenterX - enemyCenterX) < 40  // Precise positioning
+      console.log('Player 3 - Hard mode: Cannot defeat enemies - taking damage')
+      // Player 3 always takes damage from any enemy collision
+      const lives = p.takeDamage()
       
-      if (isPlayerAbove && isPlayerFalling && isHorizontallyClose) {
-        console.log('Player 3 - Hard mode: Perfect stomp!')
-        
-        // Destroy enemy
-        e.destroyEnemy()
-        
-        // Force player to bounce up automatically
-        p.setVelocityY(-300)
-        
-        // Add score
-        const uiScene = this.scene.get('UIScene') as any
-        uiScene.updateScore(50)
-      } else {
-        console.log('Player 3 - Hard mode: Failed stomp - taking damage')
-        // Any other collision - player takes damage
-        const lives = p.takeDamage()
-        
-        const uiScene = this.scene.get('UIScene') as any
-        uiScene.updateLives(lives)
-      }
+      const uiScene = this.scene.get('UIScene') as any
+      uiScene.updateLives(lives)
       return
     }
   }
@@ -316,10 +314,10 @@ export class Stage1Scene extends Phaser.Scene {
       centerY, 
       'Stage 1 Complete!', 
       {
-        fontSize: '48px',
+        fontSize: '32px',
         color: '#ffffff',
         stroke: '#000000',
-        strokeThickness: 6
+        strokeThickness: 4
       }
     ).setOrigin(0.5)
 
@@ -335,6 +333,31 @@ export class Stage1Scene extends Phaser.Scene {
       this.scene.stop('Stage1Scene')
       this.scene.start('Stage2Scene')
       this.scene.launch('UIScene')
+    })
+  }
+
+  setupMobileControls() {
+    // Create invisible touch zones for mobile controls
+    const leftZone = this.add.rectangle(0, 0, this.cameras.main.width / 2, this.cameras.main.height, 0x000000, 0)
+    leftZone.setOrigin(0, 0)
+    leftZone.setInteractive()
+    leftZone.setScrollFactor(0)
+
+    const rightZone = this.add.rectangle(this.cameras.main.width / 2, 0, this.cameras.main.width / 2, this.cameras.main.height, 0x000000, 0)
+    rightZone.setOrigin(0, 0)
+    rightZone.setInteractive()
+    rightZone.setScrollFactor(0)
+
+    // Left side tap: switch to left movement + jump
+    leftZone.on('pointerdown', () => {
+      this.player.setMobileDirection('left')
+      this.player.jump()
+    })
+
+    // Right side tap: switch to right movement + jump
+    rightZone.on('pointerdown', () => {
+      this.player.setMobileDirection('right')
+      this.player.jump()
     })
   }
 }
