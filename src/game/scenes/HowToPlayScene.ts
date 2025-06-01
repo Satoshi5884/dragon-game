@@ -67,7 +67,7 @@ export class HowToPlayScene extends Phaser.Scene {
       color: '#ff00ff'
     }).setOrigin(0.5)
 
-    this.add.text(width / 2, 620, 'コインを集めて敵を倒そう！\n画面外に落ちないよう注意', {
+    this.add.text(width / 2, 620, '敵を避けてゴールを目指そう！\nステージは全部で3つ！', {
       font: '16px Arial',
       color: '#ffffff',
       align: 'center',
