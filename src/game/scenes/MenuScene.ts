@@ -5,6 +5,7 @@ export class MenuScene extends Phaser.Scene {
   private characterSprites: Phaser.GameObjects.Image[] = []
   private selectionFrame!: Phaser.GameObjects.Rectangle
   private startButton!: Phaser.GameObjects.Text
+  private howToPlayButton!: Phaser.GameObjects.Text
   private selectedControlMode: 'pc' | 'mobile' = 'mobile'
   private pcModeButton!: Phaser.GameObjects.Text
   private mobileModeButton!: Phaser.GameObjects.Text
@@ -122,8 +123,8 @@ export class MenuScene extends Phaser.Scene {
     }).setOrigin(0.5)
 
     // Start button
-    this.startButton = this.add.text(width / 2, height * 0.7, 'Start Game', {
-      font: '32px Arial',
+    this.startButton = this.add.text(width / 2, height * 0.65, 'ゲーム開始', {
+      font: '28px Arial',
       color: '#ffffff',
       backgroundColor: '#16213e',
       padding: { x: 20, y: 10 }
@@ -139,6 +140,26 @@ export class MenuScene extends Phaser.Scene {
 
     this.startButton.on('pointerdown', () => {
       this.startGame()
+    })
+
+    // How to Play button
+    this.howToPlayButton = this.add.text(width / 2, height * 0.75, '操作方法', {
+      font: '24px Arial',
+      color: '#ffffff',
+      backgroundColor: '#2a4d3a',
+      padding: { x: 20, y: 8 }
+    }).setOrigin(0.5).setInteractive()
+
+    this.howToPlayButton.on('pointerover', () => {
+      this.howToPlayButton.setStyle({ backgroundColor: '#1e3a29' })
+    })
+
+    this.howToPlayButton.on('pointerout', () => {
+      this.howToPlayButton.setStyle({ backgroundColor: '#2a4d3a' })
+    })
+
+    this.howToPlayButton.on('pointerdown', () => {
+      this.scene.start('HowToPlayScene')
     })
 
     // Add space key for starting game
@@ -164,7 +185,7 @@ export class MenuScene extends Phaser.Scene {
     })
 
     // Instructions
-    this.add.text(width / 2, height * 0.85, 'Easy: Defeat enemies on contact\nMedium: Must stomp on enemies\nHard: Precise stomping required\n\nArrow Keys: Change Character\nSpace: Start Game', {
+    this.add.text(width / 2, height * 0.88, '矢印キー: キャラクター変更 | スペース: ゲーム開始\n詳しい操作方法は「操作方法」ボタンをタップ', {
       font: '12px Arial',
       color: '#ffffff',
       align: 'center'

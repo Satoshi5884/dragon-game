@@ -1,6 +1,7 @@
 import Phaser from 'phaser'
 import { PreloadScene } from './scenes/PreloadScene'
 import { MenuScene } from './scenes/MenuScene'
+import { HowToPlayScene } from './scenes/HowToPlayScene'
 import { Stage1Scene } from './scenes/Stage1Scene'
 import { Stage2Scene } from './scenes/Stage2Scene'
 import { Stage3Scene } from './scenes/Stage3Scene'
@@ -35,6 +36,7 @@ export class Game {
       scene: [
         PreloadScene,
         MenuScene,
+        HowToPlayScene,
         Stage1Scene,
         Stage2Scene,
         Stage3Scene,
